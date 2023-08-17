@@ -1,18 +1,56 @@
 #include <Arduino.h>
+#include <AZ3166SPI.h>
+#include <AZ3166WiFi.h>
+#include <HTS221Sensor.h>
+#include <IoT_DevKit_HW.h>
+#include <AzureIotHub.h>
 
-// put function declarations here:
-int myFunction(int, int);
+DevI2C *i2c;
+HTS221Sensor *sensor;
+float humidity = 0;
+float temperature = 0;
+unsigned char id;
 
-void setup() {
+void setup()
+{
   // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+  Screen.print(0, "MXChip Demo");
+
+  WiFi.begin();
+  if (WiFi.status() == WL_CONNECTED)
+  {
+    Screen.print(1, "Connected!");
+  }
+  else
+  {
+    Screen.print(1, "No WiFi!");
+  }
+
+  i2c = new DevI2C(D14, D15);
+  sensor = new HTS221Sensor(*i2c);
+  // init the sensor
+  sensor->init(NULL);
 }
 
-void loop() {
+void loop()
+{
   // put your main code here, to run repeatedly:
-}
-
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+  // enable
+  sensor->enable();
+  // read id
+  sensor->readId(&id);
+  Serial.printf("ID: %d\r\n", id);
+  // get humidity
+  sensor->getHumidity(&humidity);
+  Serial.print("Humidity: ");
+  Serial.println(humidity);
+  // get temperature
+  sensor->getTemperature(&temperature);
+  Serial.print("Temperature: ");
+  Serial.println(temperature);
+  // disable the sensor
+  sensor->disable();
+  // reset
+  sensor->reset();
+  delay(1000);
 }
