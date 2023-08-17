@@ -4,9 +4,11 @@
 #include <HTS221Sensor.h>
 #include <IoT_DevKit_HW.h>
 #include <AzureIotHub.h>
+#include <DevKitMQTTClient.h>
 
 DevI2C *i2c;
 HTS221Sensor *sensor;
+
 float humidity = 0;
 float temperature = 0;
 unsigned char id;
